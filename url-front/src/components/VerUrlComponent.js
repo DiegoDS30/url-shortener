@@ -16,76 +16,81 @@ const VerUrlComponent = () => {
             let chart1;
             let chart2;
 
-            (async function () {
-
-                if (chart1 && chart2) {
-
-                    chart1.destroy();
-                    chart2.destroy();
-                    chart1 = new Chart (
-                        document.getElementById ('cantClick'),
-                            {
-                                type: 'pie',
-                                data: {
-                                    labels: urls.map (url => url.urlCor),
-                                    datasets: [{
-                                        label: 'Cantidad de clicks',
-                                        data: urls.map (url => url.cantClick),
-                                        hoverOffset: 4,
-                                    }]
-                            }
-                        }
-                    )
-
-                    chart2 = new Chart (
-                        document.getElementById ('cantAcortado'),
-                            {
-                                type: 'pie',
-                                data: {
-                                    labels: urls.map (url => url.urlCor),
-                                    datasets: [{
-                                        label: 'Cantidad de veces que se acorto',
-                                        data: urls.map (url => url.cantShort),
-                                        hoverOffset: 4,
-                                    }]
+            document.getElementById ('btnMostrar').addEventListener ('click', () => {
+    
+                (async function () {
+    
+                    if (chart1 && chart2) {
+    
+                        chart1.destroy();
+                        chart2.destroy();
+    
+                        chart1 = new Chart (
+                            document.getElementById ('cantClick'),
+                                {
+                                    type: 'pie',
+                                    data: {
+                                        labels: resultado.data.map (url => url.urlCor),
+                                        datasets: [{
+                                            label: 'Cantidad de clicks',
+                                            data: resultado.data.map (url => url.cantClick),
+                                            hoverOffset: 4,
+                                        }]
                                 }
                             }
-                    )
-
-                } /* else {
-
-                    chart1 = new Chart (
-                        document.getElementById ('cantClick'),
-                            {
-                                type: 'pie',
-                                data: {
-                                    labels: urls.map (url => url.urlCor),
-                                    datasets: [{
-                                        label: 'Cantidad de clicks',
-                                        data: urls.map (url => url.cantClick),
-                                        hoverOffset: 4,
-                                    }]
-                            }
-                        }
-                    )
-
-                    chart2 = new Chart (
-                        document.getElementById ('cantAcortado'),
-                            {
-                                type: 'pie',
-                                data: {
-                                    labels: urls.map (url => url.urlCor),
-                                    datasets: [{
-                                        label: 'Cantidad de veces que se acorto',
-                                        data: urls.map (url => url.cantShort),
-                                        hoverOffset: 4,
-                                    }]
+                        )
+    
+                        chart2 = new Chart (
+                            document.getElementById ('cantAcortado'),
+                                {
+                                    type: 'pie',
+                                    data: {
+                                        labels: resultado.data.map (url => url.urlCor),
+                                        datasets: [{
+                                            label: 'Cantidad de veces que se acorto',
+                                            data: resultado.data.map (url => url.cantShort),
+                                            hoverOffset: 4,
+                                        }]
+                                    }
+                                }
+                        )
+    
+                    } else {
+    
+                        chart1 = new Chart (
+                            document.getElementById ('cantClick'),
+                                {
+                                    type: 'pie',
+                                    data: {
+                                        labels: resultado.data.map (url => url.urlCor),
+                                        datasets: [{
+                                            label: 'Cantidad de clicks',
+                                            data: resultado.data.map (url => url.cantClick),
+                                            hoverOffset: 4,
+                                        }]
                                 }
                             }
-                    )
-                } */
-
-            })();
+                        )
+    
+                        chart2 = new Chart (
+                            document.getElementById ('cantAcortado'),
+                                {
+                                    type: 'pie',
+                                    data: {
+                                        labels: resultado.data.map (url => url.urlCor),
+                                        datasets: [{
+                                            label: 'Cantidad de veces que se acorto',
+                                            data: resultado.data.map (url => url.cantShort),
+                                            hoverOffset: 4,
+                                        }]
+                                    }
+                                }
+                        )
+                    }
+    
+                })();
+    
+            })
 
         };
 
@@ -111,8 +116,12 @@ const VerUrlComponent = () => {
     return (
 
         <div>
+
+            <div>
+                <button type='button' id='btnMostrar' className='btn btn-warning'>Mostrar estadisticas</button>
+            </div>
             
-            <div className='d-flex justify-content-center align-items-center mt-5 mb-5'>
+            <div id='canvas' className='d-flex justify-content-center align-items-center mt-5 mb-5'>
                 <div style={{width: 500}}>
                     <canvas id='cantClick'></canvas>
                 </div>
