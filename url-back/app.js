@@ -69,16 +69,20 @@ app.post ('/short', async (req, res) => {
 
             } else {
 
-                const urlCor = `${base}/${urlId}`;
+                const urlCor = `${base}/${urlId}`; // Generamos la url acortada con el ID unico
 
-                urlN = new url ({
+                let hoy = new Date ();
+                let compensar = hoy.getTimezoneOffset(); // Cuando vayamos a insertar la fecha la vamos a pasar primero a formato ISO 8601 y tenemos que compensar la diferencia
+                hoy = new Date (hoy.getTime() - (compensar*60*1000)) // Aca restamos la diferencia
+
+                urlN = new url ({ // Documento que se va a insertar
                     urlId,
                     urlOrg,
                     urlCor,
-                    creacion: new Date (),
-                });
+                    creacion: hoy.toISOString().split('T')[0], // Y hacemos esto para que quede prolijo como YYYY-MM-DD
+                }); 
 
-                await urlN.save ();
+                await urlN.save (); // Insertamos en la DB
                 res.json(urlN)
                 //res.redirect('/');
 

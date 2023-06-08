@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, PureComponent } from 'react';
 import axios from 'axios';
 import Chart from 'chart.js/auto'
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const VerUrlComponent = () => {
 
@@ -12,85 +13,6 @@ const VerUrlComponent = () => {
 
             const resultado = await axios.get ('http://localhost:3333/all');
             setUrls (resultado.data);
-
-            let chart1;
-            let chart2;
-
-            document.getElementById ('btnMostrar').addEventListener ('click', () => {
-    
-                (async function () {
-    
-                    if (chart1 && chart2) {
-    
-                        chart1.destroy();
-                        chart2.destroy();
-    
-                        chart1 = new Chart (
-                            document.getElementById ('cantClick'),
-                                {
-                                    type: 'pie',
-                                    data: {
-                                        labels: resultado.data.map (url => url.urlCor),
-                                        datasets: [{
-                                            label: 'Cantidad de clicks',
-                                            data: resultado.data.map (url => url.cantClick),
-                                            hoverOffset: 4,
-                                        }]
-                                }
-                            }
-                        )
-    
-                        chart2 = new Chart (
-                            document.getElementById ('cantAcortado'),
-                                {
-                                    type: 'pie',
-                                    data: {
-                                        labels: resultado.data.map (url => url.urlCor),
-                                        datasets: [{
-                                            label: 'Cantidad de veces que se acorto',
-                                            data: resultado.data.map (url => url.cantShort),
-                                            hoverOffset: 4,
-                                        }]
-                                    }
-                                }
-                        )
-    
-                    } else {
-    
-                        chart1 = new Chart (
-                            document.getElementById ('cantClick'),
-                                {
-                                    type: 'pie',
-                                    data: {
-                                        labels: resultado.data.map (url => url.urlCor),
-                                        datasets: [{
-                                            label: 'Cantidad de clicks',
-                                            data: resultado.data.map (url => url.cantClick),
-                                            hoverOffset: 4,
-                                        }]
-                                }
-                            }
-                        )
-    
-                        chart2 = new Chart (
-                            document.getElementById ('cantAcortado'),
-                                {
-                                    type: 'pie',
-                                    data: {
-                                        labels: resultado.data.map (url => url.urlCor),
-                                        datasets: [{
-                                            label: 'Cantidad de veces que se acorto',
-                                            data: resultado.data.map (url => url.cantShort),
-                                            hoverOffset: 4,
-                                        }]
-                                    }
-                                }
-                        )
-                    }
-    
-                })();
-    
-            })
 
         };
 
@@ -117,20 +39,23 @@ const VerUrlComponent = () => {
 
         <div>
 
-            <div>
-                <button type='button' id='btnMostrar' className='btn btn-warning'>Mostrar estadisticas</button>
-            </div>
-            
-            <div id='canvas' className='d-flex justify-content-center align-items-center mt-5 mb-5'>
-                <div style={{width: 500}}>
-                    <canvas id='cantClick'></canvas>
-                </div>
-                <div style={{width: 500}}>
-                    <canvas id='cantAcortado'></canvas>
-                </div>
-            </div>
+                <BarChart
+                    width={1300}
+                    height={600}
+                    data={urls}
+                    layout='vertical'
+                    margin={{top: 5, right: 0, left: 200, bottom: 5}}
+                >
+                    <XAxis type='number' dataKey='cantClick'/>
+                    <YAxis type='category' dataKey='urlCor'/>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey='cantClick' name='Cantidad de clicks' fill='#009DDC'/>
+                    <Bar dataKey='cantShort' name='Cantidad de veces que se acorto' fill='#2B3A67'/>
+                </BarChart>
 
-            <table className='table'>
+            <table className='table mt-5'>
                 <thead className='table-warning'>
                     <tr className='row'>
                         <th className='col-4'>URL original</th>
@@ -157,8 +82,6 @@ const VerUrlComponent = () => {
                 </tbody>
             </table>
         </div>
-
-        
 
     );
 
