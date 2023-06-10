@@ -1,18 +1,20 @@
 const express = require ('express');
 const cors = require ('cors')
-const dotenv = require ('dotenv');
+const dotenv = require ('dotenv'); // Variables de entorno (might come in handy)
 const mongoose = require ('mongoose');
-const shortid = require ('shortid'); // Generar IDs unicas
-const url = require ('./url');
-const utils = require ('./Util/util')
+const shortid = require ('shortid'); // Generar IDs unicas cortas
+const uap = require ('ua-parser-js'); // Para parsear el ua, intente a hacerlo a mano pero quedo mal jeje
+
+const url = require ('./Model/url');
+const users = require ('./Model/users');
+const utils = require ('./Util/util');
+
 
 dotenv.config(); // Para usar variables de entorno
 const app =  express ();
 
-app.set('view engine', 'ejs')
 app.use (cors());
 app.use (express.json());
-//app.use (express.urlencoded({ extended: false }));
 
 mongoose.connect(process.env.MONGO_URI, {
 
@@ -36,11 +38,25 @@ mongoose.connect(process.env.MONGO_URI, {
 
 app.get ('/all', async (req, res) => {
 
-    const allUrl = await url.find ();
+    const allUrl = await url.find (); // Traemos todos los datos de la base
+    
+    const aggBrowser = users.aggregate([
+
+        { $match: { browser: 'Firefox' } },
+        { $group: { _id: '$browser', count: { $sum: 1 } } },
+
+    ]);
+
+    const aggOS = users.aggregate ([
+
+        { $match: { browser: 'Windows' } },
+        { $group: { _id: '$browser', count: { $sum: 1} } },
+        
+    ]);
+
+    // Not really convinces about this aggregation.
 
     res.json(allUrl);
-
-    //res.render('index', { allUrl: allUrl });
 
 })
 
@@ -48,7 +64,6 @@ app.get ('/all', async (req, res) => {
 
 app.post ('/short', async (req, res) => {
 
-    //const urlOrg = req.body.urlCom;
     const { urlOrg } = req.body;
     const base = `http://localhost:3333`; // cambiar por env.BASE luego
 
@@ -65,7 +80,6 @@ app.post ('/short', async (req, res) => {
                 urlN.cantShort++;
                 urlN.save();
                 res.json(urlN)
-                //res.redirect('/');
 
             } else {
 
@@ -84,7 +98,6 @@ app.post ('/short', async (req, res) => {
 
                 await urlN.save (); // Insertamos en la DB
                 res.json(urlN)
-                //res.redirect('/');
 
             }
 
@@ -109,13 +122,27 @@ app.get ('/:urlId', async (req, res) => {
 
     try {
 
-        const urlF = await url.findOne ({ urlId: req.params.urlId });
+        const urlF = await url.findOne ({ urlId: req.params.urlId }); // Buscamos el identificador en la base
 
         if (urlF) {
 
-            urlF.cantClick++;
+            const userA = req.get('User-Agent'); // Nos traemos el ua del usuario para guardarlo
+            const parser = uap(userA); // Creamos un objeto con el ua parseado
+
+            let userBrowser = parser.browser.name; // Solo el string del nombre
+            let userOS = parser.os.name; // Solo el string del OS
+            let urlAccedida = urlF.urlCor; // El link que accedio (might be usefull for a V2)
+
+            let newAgent = new users ({
+                browser: userBrowser,
+                os: userOS,
+                linkAccessed: urlAccedida,
+            });
+
+            urlF.cantClick++; // Sumamos un click
+            newAgent.save();
             urlF.save();
-            return res.redirect (urlF.urlOrg);
+            return res.redirect (urlF.urlOrg); // Y redireccionamos
 
         } else res.sendStatus(404);
 
@@ -136,7 +163,7 @@ app.delete ('/delete/:urlId', async (req, res) => {
 
         await url.deleteOne ({ urlId: req.params.urlId });
         res.json(data);
-        //res.redirect('/')
+
     } catch (err) {
 
         console.log (err);
@@ -149,6 +176,6 @@ const PUERTO = process.env.PUERTO || 3333;
 
 app.listen (PUERTO, () => {
 
-    console.log (`Server anda por lo menos: ${PUERTO} :)`);
+    console.log (`Server anda por lo menos, puerto: ${PUERTO} :)`);
 
 })
