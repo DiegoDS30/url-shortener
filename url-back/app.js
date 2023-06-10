@@ -42,19 +42,17 @@ app.get ('/all', async (req, res) => {
     
     const aggBrowser = users.aggregate([
 
-        { $match: { browser: 'Firefox' } },
+        { $match: { browser:  { $in: ['Firefox', 'Chrome'] } } },
         { $group: { _id: '$browser', count: { $sum: 1 } } },
 
     ]);
 
     const aggOS = users.aggregate ([
 
-        { $match: { browser: 'Windows' } },
+        { $match: { browser: { $in: ['Windows', 'Ubuntu'] } } },
         { $group: { _id: '$browser', count: { $sum: 1} } },
         
     ]);
-
-    // Not really convinces about this aggregation.
 
     res.json(allUrl);
 
