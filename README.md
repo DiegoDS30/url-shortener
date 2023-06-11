@@ -6,7 +6,7 @@ Tenemos el siguiente link: https://www.mercadolibre.com.uy/c/computacion#menu=ca
 
 Si lo introducimos en nuestra aplicación, el objetivo es obtener algo como: https://me.li/xxyyzz
 
-Nosotros como usuarios finales, si navegamos al link acortado en realidad nos dirigimos al primero. De esta manera contamos con una herramienta para hacer los canales de comunicación més eficientes.
+Nosotros como usuarios finales, si navegamos al link acortado en realidad nos dirigimos al primero. De esta manera contamos con una herramienta para hacer los canales de comunicación más eficientes.
 
 ## Requerimientos
 - Dada una URL larga, mi servicio me tiene que devolver una URL corta.
