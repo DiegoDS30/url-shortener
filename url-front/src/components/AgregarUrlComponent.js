@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // cliente HTTP a base de promesas
+import axios from 'axios';
 
 const AgregarUrlComponent = () => {
+
+    // Cuando mandamos una url valida seteamos el estado y la mandamos a la api
 
     const [url, setUrl] = useState ('');
 
@@ -60,7 +62,7 @@ const AgregarUrlComponent = () => {
 
                     </form>
 
-                    <p>Su URL acortada:</p><a className='mb-2' id='link' href=''></a>
+                    <p>Su URL acortada:</p><a className='mb-2 border border-dark-subtle p-2' id='link' href=''></a>
 
                 </section>
             </main>

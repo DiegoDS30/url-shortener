@@ -39,22 +39,33 @@ mongoose.connect(process.env.MONGO_URI, {
 app.get ('/all', async (req, res) => {
 
     const allUrl = await url.find (); // Traemos todos los datos de la base
-    
-    const aggBrowser = users.aggregate([
+    const aggDatos = users.aggregate([ 
 
-        { $match: { browser:  { $in: ['Firefox', 'Chrome'] } } },
-        { $group: { _id: '$browser', count: { $sum: 1 } } },
+        { $facet: {
+
+            'os': [
+                { $group: { _id: '$os', count: { $sum: 1} } },
+            ],
+            'browser': [
+                { $group: { _id: '$browser', count: { $sum: 1} } },
+            ]
+
+        }},
 
     ]);
 
-    const aggOS = users.aggregate ([
+    let datosUsuarios
 
-        { $match: { browser: { $in: ['Windows', 'Ubuntu'] } } },
-        { $group: { _id: '$browser', count: { $sum: 1} } },
-        
-    ]);
+    for await (const datos of aggDatos) {
 
-    res.json(allUrl);
+        datosUsuarios = datos;
+
+    }
+
+    res.json( { 
+        allUrl: allUrl, 
+        aggData: datosUsuarios 
+    } );
 
 })
 

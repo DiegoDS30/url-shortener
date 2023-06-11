@@ -1,24 +1,41 @@
 import React, { useEffect, useState, PureComponent } from 'react';
 import axios from 'axios';
-import Chart from 'chart.js/auto'
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
 const VerUrlComponent = () => {
 
+    // Seteamos las urls como vacias al principio, para cambiar el estado llamando a la api
+
     const [urls, setUrls] = useState ([]);
+    const [uaUser, setUA] = useState ([]);
+
+    // Sincro con la api, traemos las urls y las seteamos
 
     useEffect (() => {
 
         const buscarYSetUrl = async () => {
 
             const resultado = await axios.get ('http://localhost:3333/all');
-            setUrls (resultado.data);
+            setUrls (resultado.data.allUrl);
 
         };
 
         buscarYSetUrl ();
 
     }, [urls]);
+
+    useEffect (() => {
+
+        const buscarYSetUA = async () => {
+
+            const resultadoUA = await axios.get ('http://localhost:3333/all');
+            setUA (resultadoUA.data.aggData);
+
+        }
+
+        buscarYSetUA ();
+
+    }, [uaUser])
 
     const borrarUrl = (e) => {
 
@@ -34,6 +51,9 @@ const VerUrlComponent = () => {
             })
 
     }
+
+    let userBrowser = uaUser.browser;
+    let userOS = uaUser.os;
 
     return (
 
@@ -81,6 +101,44 @@ const VerUrlComponent = () => {
                     ))}
                 </tbody>
             </table>
+
+            <div className='d-flex'> {/* Should be ResponsiveContainer, but it breaks */}
+                    <PieChart width={650} height={400}>
+                        <Pie
+                            data={userBrowser}
+                            dataKey={"count"}
+                            nameKey={"_id"}
+                            label={'kk'}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={130}
+                            fill='#8884d8'
+                        >
+                            <Cell key={`cell-${userBrowser}`}></Cell>
+                            <Legend />
+                            <Tooltip />
+                        </Pie>
+                    </PieChart>
+
+                    <PieChart width={650} height={400}>
+                        <Pie
+                            data={userOS}
+                            dataKey={"count"}
+                            nameKey={"_id"}
+                            label={'_id'}
+                            cx='50%'
+                            cy='50%'
+                            outerRadius={130}
+                            fill='#82ca9d'
+                        >
+                            <Cell key={`cell-${userOS}`}></Cell>
+                            <Legend />
+                            <Tooltip />
+                        </Pie>
+                            
+                    </PieChart>
+                </div>
+
         </div>
 
     );
