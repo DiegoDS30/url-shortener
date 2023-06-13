@@ -38,7 +38,18 @@ Es la primera vez que utilizo MongoDB y React, so mistakes were made. Pero todo 
 - `/$urlId` Este endpoint nos redirecciona a la URL original, donde *$urlId* nos sirve para identificar la URL original en la BD.
 - `/delete/$urlId` Para borrar el link acortado, es decir, si lo introduciríamos en el navegador NO nos redirige a la URL original.
 
+## Observaciones
+- Cuando se genera una ID existe la posibilidad de que esa ID ya exista, por lo tanto habría que corroborar que no haya colisión.
+- Existiendo distintos medios de difusión (ej: corre, mensaje, WhatsApp, etc.), una buena idea es implementar que distintas URLs acortadas redirijan a una URL común, estas URLs acortadas tendrían distinguirse por el medio que se mandó. Por ej: Tenemos un link (https://listado.mercadolibre.com.uy/hogar-muebles-jardin/bazar-cocina/) y queremos mandarlo por correo y mensaje. La aplicación tendria nos pregunta el medio y nos devuelve dos URLs acortadas tales como (me.li/12xyzz) y (me.li/98bcaa) donde ambas nos mandan al link original, pero el medio por el cual se mandaron son diferentes. De esta manera podemos recaudar más datos de forma más eficiente.
+- Al método de borrado actual, agregar una alerta antes de mandar el formulario. Agregar también un campo donde pueda introducir la URL que quiero borrar.
+- Puede ser medio confuso usar términos en inglés y español al mismo tiempo, por lo cual sería ideal ir por uno o por el otro.
+
 ### ToDo
 - [ ] Mejorar la estructura de carpetas
 - [ ] Investigar e implementar testing
 - [ ] Divide and conquer, los componentes cumplen una sola función
+- [ ] Agregar país desde donde se ingresó a una URL corta
+- [ ] Revisar existencias de ID
+- [ ] Agregar medios de difusión
+- [ ] Alerta al borrar
+- [ ] Homogeneizar el idioma
